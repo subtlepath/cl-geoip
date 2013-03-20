@@ -8,6 +8,19 @@ database.
 
 Currently supports loading the database and basic querying.
 
+Installing
+----------
+
+`git clone git://github.com/subtlepath/cl-geoip.git` somewhere on your
+ASDF load path such as ~/quicklisp/local-projects/
+
+For my local Lisp systems I like to create a file
+`~/.config/common-lisp/source-registry.conf.d/home-lisp.conf` containing
+the following line, and put things in there:
+
+    (:tree "/home/new/lisp/")
+
+
 Example
 -------
 
