@@ -34,7 +34,10 @@
   :serial t
   :version 0.1
   :description "cl-geoip is a system for reading the binary IP geolocation databases provided by Maxmind."
-  :depends-on (:osicat
+  :depends-on (
+               #-sbcl
+               :bordeaux-threads
+               :osicat
                :alexandria
                :babel
                :iterate

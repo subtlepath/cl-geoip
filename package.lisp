@@ -27,8 +27,12 @@
   (:use :cl
         :alexandria
         :iter
-        :cl-ppcre)
+        :cl-ppcre
+        :cffi)
+  #+sbcl
   (:import-from :sb-thread :make-mutex :with-mutex)
+  #-sbcl
+  (:import-from :bordeaux-threads :make-lock :with-lock-held)
   (:import-from :babel :octets-to-string)
   (:export :record :get-record :record-latitude :record-longitude
            :record-region-name :record-city :record-postal-code
