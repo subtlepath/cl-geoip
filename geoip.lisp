@@ -25,6 +25,13 @@
 
 (in-package :geoip)
 
+(defmacro with-xplat-mutex (m &body body)
+  #+sbcl
+  `(with-mutex ,m ,@body)
+  #-sbcl
+  `(with-lock-held ,m ,@body)
+  )
+
 (defclass geoipdb ()
   ((stream :reader db-stream)
 
@@ -37,7 +44,11 @@
    (segments :reader segments
              :initform +country-begin+)
 
-   (mutex :reader mutex :initform (make-mutex))))
+   (mutex :reader mutex :initform
+          #+sbcl
+          (make-mutex)
+          #-sbcl
+          (make-lock))))
 
 (defstruct record
   (latitude 0.0 :type short-float)
@@ -117,7 +128,7 @@
       (iter (for depth from seek-depth downto 0)
             (let ((buf (make-array (* 2 record-length) :element-type '(unsigned-byte 8)))
                   (x (make-array 2 :initial-element 0)))
-              (with-mutex (mutex)
+              (with-xplat-mutex (mutex)
                 (file-position stream (* 2 record-length offset))
                 (read-sequence buf stream))
 
@@ -150,7 +161,7 @@
       (when (eql country-start segments)
         (return-from get-record))
 
-      (with-mutex (mutex)
+      (with-xplat-mutex (mutex)
         (file-position stream (+ country-start (* segments (1- (* record-length 2)))))
         (read-sequence buf stream))
 
